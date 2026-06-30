@@ -71,7 +71,6 @@
         #adminPanel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 26px; border: 1px solid rgba(0,0,0,0.05); z-index: 3000; width: 90%; max-width: 410px; border-radius: 28px; box-shadow: 0 24px 50px rgba(0,0,0,0.15); text-align: right; }
         #adminPanel input, #adminPanel textarea { width: 100%; padding: 13px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #e5e5ea; box-sizing: border-box; background: #f9f9f9; font-family: inherit; }
 
-        /* ستايل التقييمات والمنتجات المقترحة */
         .stars-display { color: #FFD700; font-size: 1.1rem; margin: 4px 0; }
         .rating-section { background: #f8f9fa; padding: 15px; border-radius: 16px; margin: 20px 0; }
         .review-box { background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
@@ -84,7 +83,7 @@
     </style>
     <script>
         window.show = function() {
-            let p = prompt("ادخل الرقم السري للوحة التحكم:");
+            var p = prompt("ادخل الرقم السري للوحة التحكم:");
             if(p === "2026") {
                 document.getElementById('adminPanel').style.display = 'block';
                 document.getElementById('multiDeleteBtn').style.display = 'block';
@@ -111,7 +110,6 @@
 
 <div class="container" id="productsGrid"></div>
 
-<!-- مودال السلة -->
 <div id="cartModal" class="cart-modal">
     <span class="close-modal" onclick="closeCart()">×</span>
     <div style="padding: 20px; text-align: right; margin-top: 40px;">
@@ -139,7 +137,6 @@
     </div>
 </div>
 
-<!-- لوحة التحكم -->
 <div id="adminPanel">
     <h3>إضافة منتج جديد 🛠️</h3>
     <input type="text" id="pTitle" placeholder="اسم المنتج">
@@ -152,7 +149,6 @@
     <button onclick="document.getElementById('adminPanel').style.display='none'" style="width:100%; background:none; border:none; color:var(--price-color); margin-top:12px; cursor:pointer; font-weight:bold; font-family:inherit;">إلغاء</button>
 </div>
 
-<!-- مودال تفاصيل المنتج -->
 <div id="productModal" class="product-modal">
     <span class="close-modal" onclick="closeModal()">×</span>
     <div class="slider-wrapper">
@@ -173,7 +169,6 @@
         
         <button class="add-to-cart-btn" onclick="addToCart()">إضافة إلى السلة 🛒</button>
 
-        <!-- قسم التقييمات -->
         <div class="rating-section">
             <h3 style="margin-top:0; font-weight:900;">تقييمات العملاء ⭐</h3>
             <div id="reviewsContainer">لا توجد تقييمات لهذا المنتج بعد. كن أول من يقيم!</div>
@@ -189,7 +184,6 @@
             </div>
         </div>
 
-        <!-- قسم باقي منتجات المتجر -->
         <div class="more-products-title">باقي منتجات المتجر 🔥</div>
         <div class="container" id="relatedProductsGrid" style="padding:0;"></div>
     </div>
@@ -204,7 +198,6 @@
     var currentInputStars = 5;
     var isModalOpen = false;
 
-    // ميزة الرجوع في الموبايل لغلق المودال
     window.addEventListener('popstate', function(event) {
         if (isModalOpen) {
             closeModal(true);
@@ -214,7 +207,10 @@
     function addToCart() {
         var qty = parseInt(document.getElementById('custQty').value);
         if(!selCol || !selSiz || qty < 1) return alert("اختر اللون والمقاس أولاً!");
-        var firstImg = (selectedProduct.imgs && selectedProduct.imgs.length > 0) ? selectedProduct.imgs[0] : '';
+        var firstImg = "";
+        if (selectedProduct.imgs && selectedProduct.imgs.length > 0) {
+            firstImg = selectedProduct.imgs[0];
+        }
         cart.push({ id: Date.now(), title: selectedProduct.title, price: selectedProduct.price, color: selCol, size: selSiz, qty: qty, img: firstImg });
         updateCartUI(); alert("تمت الإضافة للسلة 🎉"); closeModal();
     }
@@ -289,4 +285,6 @@
     }
 
     function selectColor(c, el) { document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); }); el.classList.add('active'); selCol = c; }
-    function selectSize(s, el) { document.querySelectorAll('.size-btn').forEach(function(b) { b.c
+    function selectSize(s, el) { document.querySelectorAll('.size-btn').forEach(function(b) { b.classList.remove('active'); }); el.classList.add('active'); selSiz = s; }
+    function updateDots() {
+        var slider = document.getElementById('imageSlider'), dots = document.querySelectorA
