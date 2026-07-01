@@ -20,7 +20,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
 
-        /* الهيدر الذكي */
+        /* الهيدر */
         header {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -32,9 +32,7 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            transition: transform 0.3s ease;
         }
-        header.hide { transform: translateY(-100%); }
 
         .logo { font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; cursor: pointer; }
         
@@ -46,7 +44,7 @@
         }
         .cart-count { background: white; color: black; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
 
-        /* شبكة المنتجات (2 جنب بعض نظام آيفون) */
+        /* شبكة المنتجات (نظام آيفون 2 جنب بعض) */
         .main-container { margin-top: 80px; padding: 12px; max-width: 800px; margin-left: auto; margin-right: auto; }
         .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
@@ -100,7 +98,7 @@
         .qty-input { width: 70px; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; font-size: 0.9rem; font-weight: 600; margin-bottom: 25px; outline: none; }
         .action-btn { width: 100%; background: var(--accent-color); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
 
-        /* كود السلة والاستمارة */
+        /* السلة والشحن */
         .cart-view { padding: 20px; max-width: 550px; margin: 40px auto 0 auto; text-align: right; }
         .cart-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
         .cart-item img { width: 55px; height: 70px; object-fit: cover; border-radius: 8px; }
@@ -109,7 +107,7 @@
 
         .form-box input, .form-box select, .form-box textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; outline: none; background: #fff; }
         
-        /* لوحة التحكم المخفية */
+        /* لوحة التحكم */
         #adminBox { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); z-index: 3000; width: 90%; max-width: 380px; text-align: right; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         #adminBox h3 { margin-bottom: 15px; font-size: 1.1rem; }
 
@@ -119,7 +117,7 @@
 </head>
 <body>
 
-<header id="mainHeader">
+<header>
     <button class="cart-btn" onclick="showCartView()">
         <span>الحقيبة</span>
         <span class="cart-count" id="cartBadge">0</span>
@@ -132,7 +130,6 @@
     <div class="products-grid" id="productsLayout"></div>
 </div>
 
-<!-- مودال سلة المشتريات -->
 <div id="cartModal" class="modal">
     <div class="close-modal" onclick="closeCartView()">×</div>
     <div class="cart-view">
@@ -160,7 +157,6 @@
     </div>
 </div>
 
-<!-- لوحة التاجر لإضافة المنتجات -->
 <div id="adminBox">
     <h3>إضافة قطعه جديدة للكوليكشن</h3>
     <div class="form-box" style="margin: 0;">
@@ -175,7 +171,6 @@
     </div>
 </div>
 
-<!-- مودال تفاصيل المنتج المعروض -->
 <div id="productModal" class="modal">
     <div class="close-modal" onclick="closeProductView()">×</div>
     <div class="slider-box">
@@ -204,14 +199,15 @@
 </div>
 
 <script>
+    // 1. المتغيرات العامة والروابط الأصلية المستقرة
     var firebaseURL = "https://mohanadstore-2cb02-default-rtdb.firebaseio.com";
     var merchantPhone = "201044667187";
     
     var localCart = [];
     var storeProducts = {};
     var currentId = null, currentObj = null, pickedColor = "", pickedSize = "";
-    
-    // دالة show لفتح لوحة التحكم
+
+    // 2. دالة الإدارة وفتح لوحة التحكم (مربوطة بالـ window مباشرة لضمان العمل في الـ Console)
     window.show = function() {
         var key = prompt("ادخل كلمة مرور التاجر:");
         if (key === "2026") {
@@ -226,35 +222,30 @@
         }
     };
 
-    // سكريبت اختفاء وظهور الهيدر مع السكرول
-    var lastScrollTop = 0;
-    var headerEl = document.getElementById('mainHeader');
-    window.addEventListener('scroll', function() {
-        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollTop > lastScrollTop && scrollTop > 80) {
-            headerEl.classList.add('hide');
-        } else {
-            headerEl.classList.remove('hide');
-        }
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-    }, false);
-
-    // كود جلب وعرض البيانات المستقر
+    // 3. دالة جلب وعرض المنتجات من الفايربيز الأساسي
     function loadStoreData() {
-        fetch(firebaseURL + "/products.json").then(function(r) { return r.json(); }).then(function(data) {
+        fetch(firebaseURL + "/products.json")
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
             storeProducts = data || {};
             var container = document.getElementById('productsLayout');
             container.innerHTML = "";
-            if(!data) {
+            
+            if(!data || Object.keys(data).length === 0) {
                 container.innerHTML = "<p style='grid-column:span 2; text-align:center; padding:40px; color:var(--muted-text); font-size:0.85rem;'>المتجر فارغ حالياً.</p>";
                 return;
             }
+            
             for (var id in data) {
                 var p = data[id];
                 var img = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : "";
                 var card = document.createElement('div');
                 card.className = "product-card";
-                (function(id, p){ card.onclick = function() { openProductView(id, p); }; })(id, p);
+                
+                // تثبيت الـ Scope لكل منتج عند الضغط
+                (function(productId, productObj){ 
+                    card.onclick = function() { openProductView(productId, productObj); }; 
+                })(id, p);
                 
                 card.innerHTML = '<input type="checkbox" class="checkbox-del" value="'+id+'" onclick="event.stopPropagation()">' +
                     '<img src="'+img+'">' +
@@ -264,31 +255,48 @@
                     '</div>';
                 container.appendChild(card);
             }
-        }).catch(function(e) { console.error(e); });
+        })
+        .catch(function(err) { console.error("Firebase load error: ", err); });
     }
 
+    // 4. دالة حفظ ونشر المنتج الجديد
     function saveNewProduct() {
         var title = document.getElementById('admTitle').value.trim();
         var price = document.getElementById('admPrice').value.trim();
         var imgsText = document.getElementById('admImgs').value.trim();
-        if(!title || !price || !imgsText) return alert("برجاء إدخال الاسم والسعر والصور!");
         
-        var imgsArray = imgsText.split('\n').filter(function(i) { return i.trim() !== ""; });
+        if(!title || !price || !imgsText) {
+            alert("برجاء إدخال الاسم والسعر والصور الأولية للمنتج!");
+            return;
+        }
+        
+        var imgsArray = imgsText.split('\n').filter(function(line) { return line.trim() !== ""; });
+        
         var payload = {
-            title: title, price: price, imgs: imgsArray,
+            title: title,
+            price: price,
+            imgs: imgsArray,
             desc: document.getElementById('admDesc').value.trim(),
             colors: document.getElementById('admColors').value.trim(),
             sizes: document.getElementById('admSizes').value.trim()
         };
-        fetch(firebaseURL + "/products.json", { method: 'POST', body: JSON.stringify(payload) }).then(function() {
+        
+        fetch(firebaseURL + "/products.json", { 
+            method: 'POST', 
+            body: JSON.stringify(payload) 
+        })
+        .then(function() {
+            alert("تم حفظ ونشر القطعة الجديدة بنجاح! 🎉");
             location.reload();
-        });
+        })
+        .catch(function(err) { alert("حدث خطأ أثناء الحفظ!"); console.error(err); });
     }
 
+    // 5. دالة حذف المنتجات المحددة
     function fireDelete() {
         var checked = document.querySelectorAll('.checkbox-del:checked');
-        if(checked.length === 0) return alert("اختر المنتجات المراد مسحها أولاً!");
-        if(confirm("هل أنت متأكد من حذف القطع المحددة؟")) {
+        if(checked.length === 0) return alert("اختر المنتجات المراد مسحها أولاً من المربعات المتاحة!");
+        if(confirm("هل أنت متأكد من حذف القطع المحددة نهائياً من قاعدة البيانات؟")) {
             var calls = [];
             checked.forEach(function(box) {
                 calls.push(fetch(firebaseURL + "/products/" + box.value + ".json", { method: 'DELETE' }));
@@ -297,6 +305,7 @@
         }
     }
 
+    // 6. فتح مودال تفاصيل المنتج المعروض
     function openProductView(id, p) {
         currentId = id; currentObj = p; pickedColor = ""; pickedSize = "";
         window.history.pushState({ pOpen: true }, "");
@@ -313,12 +322,13 @@
 
         document.getElementById('mTitle').innerText = p.title;
         document.getElementById('mPrice').innerText = p.price + " EGP";
-        document.getElementById('mDesc').innerText = p.desc || "لا توجد تفاصيل إضافية للقطعة.";
+        document.getElementById('mDesc').innerText = p.desc || "لا توجد تفاصيل إضافية للقطعة المعروضة حالياً.";
         
         var colBox = document.getElementById('mColors'); colBox.innerHTML = "";
         if(p.colors) {
             p.colors.split(',').forEach(function(c) {
                 var clean = c.trim();
+                if(clean === "") return;
                 var div = document.createElement('div'); div.className = "color-option"; div.style.background = clean;
                 div.onclick = function() {
                     document.querySelectorAll('.color-option').forEach(function(o){o.classList.remove('selected')});
@@ -332,6 +342,7 @@
         if(p.sizes) {
             p.sizes.split(',').forEach(function(s) {
                 var clean = s.trim();
+                if(clean === "") return;
                 var div = document.createElement('div'); div.className = "size-option"; div.innerText = clean;
                 div.onclick = function() {
                     document.querySelectorAll('.size-option').forEach(function(o){o.classList.remove('selected')});
@@ -356,6 +367,7 @@
 
     function closeProductView() { document.getElementById('productModal').style.display = 'none'; }
 
+    // 7. عرض المنتجات المقترحة داخل المودال
     function renderRelatedInModal() {
         var relGrid = document.getElementById('relatedLayout'); relGrid.innerHTML = "";
         var loop = 0;
@@ -365,13 +377,8 @@
             var p = storeProducts[id];
             var img = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : "";
             var card = document.createElement('div'); card.className = "product-card";
-            (function(id, p){ card.onclick = function() { openProductView(id, p); }; })(id, p);
+            (function(productId, productObj){ 
+                card.onclick = function() { openProductView(productId, productObj); }; 
+            })(id, p);
             card.innerHTML = '<img src="'+img+'"><div class="product-info"><span class="product-title">'+p.title+'</span><span class="product-price">'+p.price+' EGP</span></div>';
-            relGrid.appendChild(card);
-        }
-    }
-
-    function addProductToCart() {
-        var qty = parseInt(document.getElementById('mQty').value);
-        if(!pickedColor || !pickedSize || qty < 1) return alert("برجاء اختيار اللون والمقاس المطلوب أولاً!");
-        var mainImg = (currentObj.imgs && currentObj.imgs.len
+            relGrid.appendCh
