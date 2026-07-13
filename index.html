@@ -10,9 +10,9 @@
         header { background: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; position: sticky; top: 0; z-index: 100; }
         
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; max-width: 600px; margin: 0 auto; }
-        .card { background: #fff; cursor: pointer; border-radius: 12px; overflow: hidden; border: 3px solid transparent; position: relative; transition: transform 0.2s; }
+        .card { background: #fff; cursor: pointer; border-radius: 12px; overflow: hidden; border: 3px solid transparent; position: relative; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .card.selected { border-color: red; transform: scale(0.95); opacity: 0.8; }
-        .cardimg { width: 100%; height: 200px; object-fit: cover; }
+        .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
         .card-info { padding: 8px; text-align: right; }
         .price { font-weight: 900; color: #d00; }
 
@@ -182,7 +182,6 @@
         const slider = document.getElementById('imageSlider'); slider.innerHTML = "";
         (p.imgs || []).forEach(u => slider.innerHTML += `<img src="${u}">`);
         
-        // دعم التقسيم بالفاصلة الإنجليزية أو الفاصلة العربية أوتوماتيكياً
         const cDiv = document.getElementById('modalColors'); cDiv.innerHTML = "";
         if(p.colors) p.colors.split(/,|،/).forEach(c => { 
             if(c.trim()) cDiv.innerHTML += `<div class="color-dot" style="background:${getColorValue(c)}" onclick="selectColor('${c.trim()}', this)"></div>`; 
