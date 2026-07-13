@@ -56,7 +56,7 @@
         .remove-item { color: red; cursor: pointer; font-size: 14px; margin-top: 5px; display: block; }
         
         #adminPanel { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 20px; border: 2px solid #000; z-index: 3000; width: 90%; max-width: 400px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto; }
-        #adminPanel input, #adminPanel textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        #adminPanel input, #adminPanel textarea { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
 
         .related-products { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
         .related-products h3 { margin-bottom: 5px; }
@@ -111,8 +111,8 @@
     <input type="number" id="pPrice" placeholder="السعر">
     <textarea id="pImgs" rows="2" placeholder="روابط الصور"></textarea>
     <textarea id="pDesc" rows="2" placeholder="الوصف"></textarea>
-    <input type="text" id="pColors" placeholder="الألوان (comma separated)">
-    <input type="text" id="pSizes" placeholder="المقاسات (comma separated)">
+    <input type="text" id="pColors" placeholder="الألوان (افصل بفاصلة ,)">
+    <input type="text" id="pSizes" placeholder="المقاسات (مثال: L,XL أو 32,34 افصل بفاصلة ,)">
     <button onclick="saveProduct()" style="width:100%; background:#000; color:#fff; padding:15px; border-radius:12px; font-weight:bold; border:none; cursor:pointer;">حفظ المنتج</button>
 </div>
 
@@ -201,8 +201,8 @@
         }
     };
 
-    // وضع الحذف الجماعي الذكي
-    function toggleDeleteMode() {
+    // وضع الحذف الجماعي المعدل (ينتظر الحذف الفعلي قبل تحديث الصفحة)
+    async function toggleDeleteMode() {
         if (!deleteMode) {
             deleteMode = true;
             document.getElementById('multiDeleteBtn').style.background = "orange";
@@ -211,8 +211,14 @@
         } else {
             if (selectedIds.length > 0) {
                 if (confirm(`هل أنت متأكد من حذف ${selectedIds.length} منتج نهائياً؟`)) {
-                    selectedIds.forEach(async id => await fetch(`${dbURL}/${id}.json`, { method: 'DELETE' }));
-                    location.reload();
+                    document.getElementById('multiDeleteBtn').innerText = "جاري الحذف ⏳...";
+                    
+                    // استخدام حلقة for للانتظار حتى يكتمل الحذف من السيرفر
+                    for (let id of selectedIds) {
+                        await fetch(`${dbURL}/${id}.json`, { method: 'DELETE' });
+                    }
+                    
+                    location.reload(); // بعد الانتهاء، اعمل ريفريش
                 }
             } else {
                 deleteMode = false; selectedIds = [];
@@ -251,7 +257,6 @@
         document.getElementById('modalDesc').innerText = p.desc || "";
         document.getElementById('custQty').value = 1;
 
-        // ميزة سكرول المنتجات الأخرى (التي حُذفت بالخطأ)
         const related = document.getElementById('relatedGrid'); related.innerHTML = "";
         for (let id in allProducts) {
             if (allProducts[id].title !== p.title) {
