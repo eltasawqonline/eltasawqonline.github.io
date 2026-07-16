@@ -38,7 +38,6 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
         .dot.active { background: #000; width: 18px; border-radius: 10px; }
 
-        /* تنسيق الصور المصغرة */
         .thumbnails-container { display: flex; justify-content: center; gap: 10px; padding: 5px 0 15px 0; }
         .thumbnail-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; cursor: pointer; transition: 0.2s; }
         .thumbnail-img.active { border-color: #000; transform: scale(1.1); }
@@ -126,7 +125,6 @@
     <div class="slider-wrapper">
         <div id="imageSlider" class="slider-container" onscroll="updateDots()"></div>
         <div id="dotsContainer" class="dots-container"></div>
-        <!-- إضافة حاوية الصور المصغرة -->
         <div id="thumbnailsContainer" class="thumbnails-container"></div>
     </div>
     <div class="details-content">
@@ -243,7 +241,6 @@
             slider.innerHTML += `<img src="${u}">`; 
             dots.innerHTML += `<div class="dot ${i===0?'active':''}"></div>`; 
             
-            // إضافة الصورة المصغرة
             const thumb = document.createElement('img');
             thumb.src = u;
             thumb.className = `thumbnail-img ${i===0?'active':''}`;
@@ -254,7 +251,10 @@
         });
 
         const cDiv = document.getElementById('modalColors'); cDiv.innerHTML = "";
-        if(p.colors) p.colors.split(',').forEach(c => { cDiv.innerHTML += `<div class="color-dot" style="background:${c.trim()}" onclick="selectColor('${c.trim()}', this)"></div>`; });
+        if(p.colors) p.colors.split(',').forEach(c => { 
+            let color = c.trim();
+            cDiv.innerHTML += `<div class="color-dot" style="background:${color}" onclick="selectColor('${color}', this)"></div>`; 
+        });
         
         const sDiv = document.getElementById('modalSizes'); sDiv.innerHTML = "";
         if(p.sizes) p.sizes.split(',').forEach(s => { sDiv.innerHTML += `<div class="size-btn" onclick="selectSize('${s.trim()}', this)">${s.trim()}</div>`; });
