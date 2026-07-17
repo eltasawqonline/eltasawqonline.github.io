@@ -288,28 +288,33 @@
     }
 
     async function loadStore() {
-        const res = await fetch(`${dbURL}.json`);
-        allProducts = await res.json();
-        const grid = document.getElementById('productsGrid'); grid.innerHTML = "";
-        if(!allProducts) return;
-        for (let id in allProducts) {
-            const p = allProducts[id];
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            card.onclick = async () => {
-                if(deleteMode) {
-                    if(confirm(`هل أنت متأكد من حذف منتج: ${p.title}؟`)) {
-                        await fetch(`${dbURL}/${id}.json`, { method: 'DELETE' });
-                        location.reload();
+        try {
+            const res = await fetch(`${dbURL}.json`);
+            if (!res.ok) throw new Error('فشل الاتصال بقاعدة البيانات');
+            allProducts = await res.json();
+            const grid = document.getElementById('productsGrid'); grid.innerHTML = "";
+            if(!allProducts) return;
+            for (let id in allProducts) {
+                const p = allProducts[id];
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                card.onclick = async () => {
+                    if(deleteMode) {
+                        if(confirm(`هل أنت متأكد من حذف منتج: ${p.title}؟`)) {
+                            await fetch(`${dbURL}/${id}.json`, { method: 'DELETE' });
+                            location.reload();
+                        }
+                    } else {
+                        openProduct(p);
                     }
-                } else {
-                    openProduct(p);
-                }
-            };
-            
-            card.innerHTML = `<img src="${p.imgs ? p.imgs[0] : ''}"><div class="card-info"><h3>${p.title}</h3><div class="price">${p.price} EGP</div></div>`;
-            grid.appendChild(card);
+                };
+                
+                card.innerHTML = `<img src="${p.imgs ? p.imgs[0] : ''}"><div class="card-info"><h3>${p.title}</h3><div class="price">${p.price} EGP</div></div>`;
+                grid.appendChild(card);
+            }
+        } catch (error) {
+            alert("مشكلة في الاتصال: " + error.message);
         }
     }
     
