@@ -19,10 +19,10 @@
         .brand-name { font-weight: 800; font-size: 1.4rem; letter-spacing: 2px; }
         .header-icons { display: flex; gap: 15px; align-items: center; font-size: 1.2rem; cursor: pointer; }
 
-        /* Product Grid */
+        /* Grid */
         .container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px; max-width: 600px; margin: 0 auto; }
         .card { background: #fff; cursor: pointer; border-radius: 12px; overflow: hidden; border: 1px solid #eee; transition: transform 0.2s; }
-        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card img { width: 100%; height: 200px; object-fit: cover; background-color: #f0f0f0; }
         .card-info { padding: 8px; text-align: right; }
         .price { font-weight: 900; color: #d00; }
 
@@ -31,23 +31,21 @@
         .close-modal { font-size: 2rem; cursor: pointer; position: absolute; left: 20px; top: 15px; z-index: 2100; }
         
         /* Product View */
-        .main-product-img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; }
+        .main-product-img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; background-color: #f0f0f0; }
         .thumb-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
         .thumbnail-img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; cursor: pointer; }
         .thumbnail-img.active { border-color: #000; }
         
-        /* Cart Styles (Match Screenshot) */
+        /* Cart */
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
         .cart-item-info { text-align: right; }
-        .cart-item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px; }
+        .cart-item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px; background-color: #f0f0f0; }
         .btn-delete { color: #d00; cursor: pointer; font-size: 0.9rem; font-weight: bold; margin-top: 5px; display: inline-block; }
 
-        /* Form Inputs */
+        /* Form Controls */
         input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         .btn-main { width: 100%; background: #000; color: #fff; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
         .btn-whatsapp { background: var(--accent); }
-
-        /* Options */
         .size-btn { border: 1.5px solid #ddd; padding: 10px 18px; cursor: pointer; border-radius: 10px; display: inline-block; margin: 5px; }
         .size-btn.active { background: #000; color: #fff; }
         .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ddd; display: inline-block; margin-left: 10px; cursor: pointer; }
@@ -60,7 +58,6 @@
 </head>
 <body>
 
-<!-- Floating Header -->
 <div class="floating-header">
     <i class="fas fa-bars"></i>
     <div class="brand-name">ETQO</div>
@@ -81,7 +78,7 @@
     <div style="font-size: 0.8rem; color: #888;">RIGHTS RESERVED TO ETQO 2026 ©</div>
 </footer>
 
-<!-- Cart Modal -->
+<!-- Cart -->
 <div id="cartModal" class="modal">
     <span class="close-modal" onclick="closeCart()">×</span>
     <div style="padding: 20px; padding-top: 60px;">
@@ -94,7 +91,19 @@
             <select id="custGov">
                 <option value="">اختر المحافظة</option>
                 <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option>
-                <option value="الإسكندرية">الإسكندرية</option>
+                <option value="الإسكندرية">الإسكندرية</option><option value="الإسماعيلية">الإسماعيلية</option>
+                <option value="أسوان">أسوان</option><option value="أسيوط">أسيوط</option>
+                <option value="الأقصر">الأقصر</option><option value="البحر الأحمر">البحر الأحمر</option>
+                <option value="البحيرة">البحيرة</option><option value="بني سويف">بني سويف</option>
+                <option value="بورسعيد">بورسعيد</option><option value="جنوب سيناء">جنوب سيناء</option>
+                <option value="الدقهلية">الدقهلية</option><option value="دمياط">دمياط</option>
+                <option value="سوهاج">سوهاج</option><option value="السويس">السويس</option>
+                <option value="الشرقية">الشرقية</option><option value="شمال سيناء">شمال سيناء</option>
+                <option value="الغربية">الغربية</option><option value="الفيوم">الفيوم</option>
+                <option value="القليوبية">القليوبية</option><option value="قنا">قنا</option>
+                <option value="كفر الشيخ">كفر الشيخ</option><option value="مطروح">مطروح</option>
+                <option value="المنوفية">المنوفية</option><option value="المنيا">المنيا</option>
+                <option value="الوادي الجديد">الوادي الجديد</option>
             </select>
             <textarea id="custAddress" placeholder="العنوان بالتفصيل"></textarea>
             <button class="btn-main btn-whatsapp" onclick="sendOrder()">تأكيد الطلب عبر واتساب 💬</button>
@@ -102,7 +111,7 @@
     </div>
 </div>
 
-<!-- Product Modal -->
+<!-- Product View -->
 <div id="productModal" class="modal">
     <span class="close-modal" onclick="closeModal()">×</span>
     <div style="padding: 20px; padding-top: 60px;">
@@ -119,7 +128,7 @@
     </div>
 </div>
 
-<!-- Admin Panel -->
+<!-- Admin -->
 <div id="adminPanel" style="display:none; position:fixed; bottom:20px; left:20px; z-index:5000; background:#fff; padding:20px; border:2px solid #000; border-radius:15px; max-width: 300px;">
     <h3>لوحة التحكم 🛠️</h3>
     <input type="text" id="pTitle" placeholder="اسم المنتج">
@@ -143,8 +152,10 @@
         const grid = document.getElementById('productsGrid'); grid.innerHTML = "";
         for (let id in allProducts) {
             const p = allProducts[id];
+            const img = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : "";
             grid.innerHTML += `<div class="card" onclick="productClicked('${id}')">
-                <img src="${p.imgs[0]}"><div class="card-info"><h3>${p.title}</h3><div class="price">${p.price} EGP</div></div>
+                <img src="${img}" onerror="this.src='https://via.placeholder.com/200?text=No+Image'">
+                <div class="card-info"><h3>${p.title}</h3><div class="price">${p.price} EGP</div></div>
             </div>`;
         }
         updateCartCount();
@@ -160,10 +171,11 @@
         document.getElementById('modalTitle').innerText = p.title;
         document.getElementById('modalPrice').innerText = p.price + " EGP";
         document.getElementById('modalDesc').innerText = p.desc || "";
-        document.getElementById('mainProductImage').src = p.imgs[0];
+        const img = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : "";
+        document.getElementById('mainProductImage').src = img;
         
         const thumbs = document.getElementById('thumbs');
-        thumbs.innerHTML = p.imgs.map((u, i) => `<img src="${u}" class="thumbnail-img ${i===0?'active':''}" onclick="changeMainImage('${u}', this)">`).join('');
+        thumbs.innerHTML = (p.imgs || []).map((u, i) => `<img src="${u}" class="thumbnail-img ${i===0?'active':''}" onclick="changeMainImage('${u}', this)">`).join('');
         
         document.getElementById('modalColors').innerHTML = (p.colors || "").split(',').map(c => `<div class="color-dot" style="background:${c.trim()}" onclick="selCol='${c.trim()}'; document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); this.classList.add('active');"></div>`).join('');
         document.getElementById('modalSizes').innerHTML = (p.sizes || "").split(',').map(s => `<div class="size-btn" onclick="selSiz='${s.trim()}'; document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">${s.trim()}</div>`).join('');
@@ -189,6 +201,7 @@
         let total = 0;
         document.getElementById('cartItems').innerHTML = cart.map((p, i) => {
             total += (p.price * p.qty);
+            const img = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : "";
             return `<div class="cart-item">
                 <div class="cart-item-info">
                     <h3 style="margin:0">${p.title}</h3>
@@ -196,7 +209,7 @@
                     <span class="price">${p.price * p.qty} EGP</span>
                     <div class="btn-delete" onclick="removeFromCart(${i})">🗑️ حذف</div>
                 </div>
-                <img src="${p.imgs[0]}" class="cart-item-img">
+                <img src="${img}" class="cart-item-img">
             </div>`;
         }).join('');
         document.getElementById('cartTotalText').innerText = "الإجمالي: " + total + " EGP";
@@ -205,11 +218,12 @@
     function removeFromCart(i) { cart.splice(i, 1); localStorage.setItem('onlineStoreCart', JSON.stringify(cart)); updateCartCount(); openCart(); }
     function updateCartCount() { document.getElementById('cartCount').innerText = cart.length; }
     
-    // Admin & Utils
-    window.show = () => { if(prompt("أدخل كلمة السر:") === "123") { document.getElementById('adminPanel').style.display = 'block'; deleteMode = true; alert("تم تفعيل وضع التعديل"); } };
+    // Global function for admin
+    function show() { if(prompt("أدخل كلمة السر:") === "123") { document.getElementById('adminPanel').style.display = 'block'; deleteMode = true; alert("تم تفعيل وضع التعديل"); } };
+    
     async function deleteProduct(id) { await fetch(`${dbURL}/${id}.json`, {method: 'DELETE'}); location.reload(); }
     async function saveProduct() {
-        const data = { title: document.getElementById('pTitle').value, price: document.getElementById('pPrice').value, imgs: document.getElementById('pImgs').value.split('\n'), desc: document.getElementById('pDesc').value, colors: document.getElementById('pColors').value, sizes: document.getElementById('pSizes').value };
+        const data = { title: document.getElementById('pTitle').value, price: document.getElementById('pPrice').value, imgs: document.getElementById('pImgs').value.split('\n').filter(i=>i), desc: document.getElementById('pDesc').value, colors: document.getElementById('pColors').value, sizes: document.getElementById('pSizes').value };
         await fetch(`${dbURL}.json`, { method: 'POST', body: JSON.stringify(data) });
         location.reload();
     }
