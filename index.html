@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETQO Store</title>
+    <title>ETQO Store - Final Master Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --main: #000; --bg: #ffffff; --accent: #25D366; }
@@ -28,7 +28,7 @@
 
         /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; overflow-y: auto; display: none; }
-        .close-modal { font-size: 2rem; cursor: pointer; position: absolute; left: 20px; top: 15px; z-index: 2100; }
+        .close-modal { font-size: 2rem; cursor: pointer; position: absolute; left: 20px; top: 15px; z-index: 2100; background: rgba(255,255,255,0.7); border-radius: 50%; padding: 0 10px; }
         
         /* Product UI */
         .main-product-img { width: 100%; height: 350px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; }
@@ -49,6 +49,15 @@
         .size-btn.active { background: #000; color: #fff; }
         .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ddd; display: inline-block; margin-left: 10px; cursor: pointer; }
         .color-dot.active { border: 2px solid #000; }
+
+        /* Enhanced Footer */
+        .site-footer { padding: 50px 20px; background: #111; color: #fff; text-align: center; margin-top: 40px; }
+        .footer-brand { font-size: 1.8rem; font-weight: bold; margin-bottom: 15px; letter-spacing: 3px; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 25px; }
+        .social-link { width: 45px; height: 45px; border-radius: 50%; background: #fff; color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; }
+        .social-link:hover { background: var(--accent); color: #fff; }
+        .footer-desc { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .footer-copyright { font-size: 0.75rem; color: #666; border-top: 1px solid #333; padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -66,6 +75,18 @@
 </div>
 
 <div class="container" id="productsGrid"></div>
+
+<!-- Footer for Main Page -->
+<div class="site-footer">
+    <div class="footer-brand">ETQO STORE</div>
+    <div class="footer-links">
+        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+    </div>
+    <div class="footer-desc">نقدم لكم أفضل التصميمات بأعلى جودة. نحن هنا لخدمتكم وتقديم تجربة تسوق ممتعة وآمنة.</div>
+    <div class="footer-copyright">RIGHTS RESERVED TO ETQO 2026 ©</div>
+</div>
 
 <!-- Admin Panel -->
 <div id="adminPanel">
@@ -91,8 +112,7 @@
         <select id="custGov">
             <option value="">اختر المحافظة</option>
             <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option>
-            <option value="الإسكندرية">الإسكندرية</option><option value="المنصورة">المنصورة</option>
-            <option value="بورسعيد">بورسعيد</option><option value="السويس">السويس</option>
+            <option value="الإسكندرية">الإسكندرية</option>
         </select>
         <textarea id="custAddress" placeholder="العنوان بالتفصيل"></textarea>
         <button class="btn-main" onclick="sendOrder()" style="background:#25D366">تأكيد الطلب عبر واتساب 💬</button>
@@ -113,6 +133,21 @@
         <p>العدد:</p>
         <input type="number" id="modalQty" value="1" min="1">
         <button class="btn-main" onclick="addToCart()" style="margin-top:20px;">إضافة للسلة 🛒</button>
+        
+        <h3 style="margin-top:40px;">منتجات أخرى قد تعجبك:</h3>
+        <div id="relatedGrid" class="container" style="grid-template-columns: 1fr 1fr; padding: 0;"></div>
+        
+        <!-- Footer Inside Product Modal -->
+        <div class="site-footer">
+            <div class="footer-brand">ETQO STORE</div>
+            <div class="footer-links">
+                <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <div class="footer-desc">نقدم لكم أفضل التصميمات بأعلى جودة. نحن هنا لخدمتكم وتقديم تجربة تسوق ممتعة وآمنة.</div>
+            <div class="footer-copyright">RIGHTS RESERVED TO ETQO 2026 ©</div>
+        </div>
     </div>
 </div>
 
@@ -125,22 +160,26 @@
     async function loadStore() {
         const res = await fetch(`${dbURL}.json`);
         allProducts = await res.json() || {};
-        const grid = document.getElementById('productsGrid'); grid.innerHTML = "";
-        for (let id in allProducts) {
-            const p = allProducts[id];
+        renderGrid('productsGrid', allProducts);
+        updateCartCount();
+    }
+
+    function renderGrid(containerId, products) {
+        const grid = document.getElementById(containerId); grid.innerHTML = "";
+        for (let id in products) {
+            const p = products[id];
             const card = document.createElement('div');
             card.className = 'card';
             card.onclick = () => {
                 if(deleteMode) { if(confirm(`حذف ${p.title}؟`)) deleteProduct(id); }
-                else { openProduct(p); }
+                else { openProduct(p, id); }
             };
             card.innerHTML = `<img src="${p.imgs[0]}"><div class="card-info"><h3>${p.title}</h3><div class="price">${p.price} EGP</div></div>`;
             grid.appendChild(card);
         }
-        updateCartCount();
     }
 
-    function openProduct(p) {
+    function openProduct(p, id) {
         selectedProduct = p; selCol = ""; selSiz = "";
         document.getElementById('modalTitle').innerText = p.title;
         document.getElementById('modalPrice').innerText = p.price + " EGP";
@@ -153,7 +192,12 @@
         document.getElementById('modalColors').innerHTML = (p.colors || "").split(',').map(c => `<div class="color-dot" style="background:${c.trim()}" onclick="selCol='${c.trim()}'; document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); this.classList.add('active');"></div>`).join('');
         document.getElementById('modalSizes').innerHTML = (p.sizes || "").split(',').map(s => `<div class="size-btn" onclick="selSiz='${s.trim()}'; document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active');">${s.trim()}</div>`).join('');
         
+        const related = {};
+        for(let key in allProducts) { if(key !== id) related[key] = allProducts[key]; }
+        renderGrid('relatedGrid', related);
+        
         document.getElementById('productModal').style.display = 'block';
+        document.getElementById('productModal').scrollTop = 0;
     }
 
     function changeMainImage(src, el) {
@@ -185,7 +229,6 @@
     function removeFromCart(i) { cart.splice(i, 1); localStorage.setItem('onlineStoreCart', JSON.stringify(cart)); updateCartCount(); openCart(); }
     function updateCartCount() { document.getElementById('cartCount').innerText = cart.length; }
 
-    // Admin Logic
     window.show = function() {
         let p = prompt("Password:");
         if(p === "123") {
